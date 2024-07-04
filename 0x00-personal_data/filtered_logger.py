@@ -70,7 +70,7 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     )
 
 
-def main():
+def main() -> None:
     """Main function to read and filter data."""
     db = get_db()
     cursor = db.cursor()
