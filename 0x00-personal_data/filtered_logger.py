@@ -5,6 +5,8 @@ import logging
 import re
 import os
 import mysql.connector
+from mysql.connector.connection import MySQLConnection
+from mysql.connector import Error
 from typing import List
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
@@ -56,18 +58,19 @@ def get_logger() -> logging.Logger:
 
 def get_db() -> mysql.connector.connection.MySQLConnection:
     """Connect to a secure database."""
+    try:
+        db = os.getenv('PERSONAL_DATA_DB_NAME')
+        user = os.getenv('PERSONAL_DATA_DB_USERNAME', 'root')
+        password = os.getenv('PERSONAL_DATA_DB_PASSWORD', '')
+        host = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
 
-    password = os.environ.get("PERSONAL_DATA_DB_PASSWORD", "")
-    username = os.environ.get('PERSONAL_DATA_DB_USERNAME', "root")
-    host = os.environ.get('PERSONAL_DATA_DB_HOST', 'localhost')
-    db_name = os.environ.get('PERSONAL_DATA_DB_NAME')
-
-    return mysql.connector.connect(
-        user=username,
-        password=password,
-        host=host,
-        database=db_name
-    )
+        connection = mysql.connector.connect(host=host, user=user,
+                                             password=password, db=db)
+        if connection.is_connected():
+            print("Db access Granted!")
+        return connection
+    except Error as e:
+        print(f"Error While connecting to the db: {e}")
 
 
 def main() -> None:
