@@ -4,7 +4,8 @@
 import bcrypt
 
 
-def hash_password(password):
+def hash_password(password: str) -> bytes:
+    """Salted pass generation"""
     # Generate a salt and hash the password
     salt = bcrypt.gensalt()
 
