@@ -11,9 +11,6 @@ class Auth():
     """
     auth
     """
-
-
-class Auth:
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """Determine if the path requires authentication."""
         if path is None:
