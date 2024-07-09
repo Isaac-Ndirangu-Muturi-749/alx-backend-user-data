@@ -2,6 +2,7 @@
 """
 auth module for the API
 """
+from typing import List
 from flask import request
 from typing import List, TypeVar
 
@@ -10,7 +11,7 @@ class Auth():
     """
     auth
     """
-from typing import List
+
 
 class Auth:
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:

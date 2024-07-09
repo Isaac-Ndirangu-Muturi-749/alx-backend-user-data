@@ -24,8 +24,8 @@ class BasicAuth(Auth):
 
     @staticmethod
     def decode_base64_authorization_header(
-                                            base64_authorization_header: str
-                                            ) -> str:
+        base64_authorization_header: str
+    ) -> str:
         """Decodes the base64 encoded header."""
         if not base64_authorization_header or not isinstance(
             base64_authorization_header, str
@@ -54,8 +54,8 @@ class BasicAuth(Auth):
 
     @staticmethod
     def user_object_from_credentials(
-                                    user_email: str, user_pwd: str
-                                    ) -> TypeVar("User"):
+        user_email: str, user_pwd: str
+    ) -> TypeVar("User"):
         """Returns the user object matching the provided
         email and password."""
         if (
