@@ -40,8 +40,7 @@ class BasicAuth(Auth):
 
     @staticmethod
     def extract_user_credentials(
-        decoded_base64_authorization_header: str,
-    ) -> (str, str):
+        decoded_base64_authorization_header: str) -> (str, str):
         """Extracts the user credentials (email, password)
         from the decoded header."""
         if (
@@ -50,7 +49,8 @@ class BasicAuth(Auth):
             or ":" not in decoded_base64_authorization_header
         ):
             return None, None
-        return decoded_base64_authorization_header.split(":")
+        email, _, password = decoded_base64_authorization_header.partition(":")
+        return email, password
 
     @staticmethod
     def user_object_from_credentials(
