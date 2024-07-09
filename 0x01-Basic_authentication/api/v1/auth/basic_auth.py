@@ -40,7 +40,7 @@ class BasicAuth(Auth):
 
     @staticmethod
     def extract_user_credentials(
-        decoded_base64_authorization_header: str) -> (str, str):
+            decoded_base64_authorization_header: str) -> (str, str):
         """Extracts the user credentials (email, password)
         from the decoded header."""
         if (
