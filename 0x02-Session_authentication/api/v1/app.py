@@ -19,15 +19,6 @@ CORS(app, resources={r"/api/v1/": {"origins": ""}})
 auth = None
 auth_type = getenv('AUTH_TYPE')
 
-if auth_type == 'basic_auth':
-    auth = BasicAuth()
-elif auth_type == 'session_auth':
-    auth = SessionAuth()
-elif auth_type == 'session_exp_auth':
-    auth = SessionExpAuth()
-
-
-auth_type = getenv("AUTH_TYPE")
 if auth_type == 'auth':
     from api.v1.auth.auth import Auth
     auth = Auth()
@@ -46,27 +37,28 @@ elif auth_type == 'session_db_auth':
 
 
 @app.before_request
-def before_request() -> str:
-    """
-    handler before_request
-    """
-    authorized_list = ['/api/v1/status/',
-                       '/api/v1/unauthorized/',
-                       '/api/v1/forbidden/',
-                       '/api/v1/auth_session/login/']
+def before_request():
+    """ Before each request, this method is executed """
+    excluded_paths = [
+        '/api/v1/status/',
+        '/api/v1/unauthorized/',
+        '/api/v1/forbidden/',
+        '/api/v1/auth_session/login/'
+    ]
 
     if auth is None:
         return
-    if request.path in authorized_list:
-        return
-    if not auth.require_auth(request.path, authorized_list):
+
+    if request.path in excluded_paths:
         return
 
-    if not auth.authorization_header(
-            request) or not auth.session_cookie(request):
-        abort(401)
-    if auth.current_user(request) is None:
-        abort(403)
+    if auth.require_auth(request.path, excluded_paths):
+        if (not auth.authorization_header(request) and
+                not auth.session_cookie(request)):
+            abort(401)
+        request.current_user = auth.current_user(request)
+        if request.current_user is None:
+            abort(403)
 
 
 @app.errorhandler(404)
