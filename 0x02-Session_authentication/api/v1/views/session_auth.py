@@ -41,11 +41,10 @@ def login() -> str:
 @app_views.route('/auth_session/logout', methods=['DELETE'],
                  strict_slashes=False)
 def logout():
-    """ DELETE /auth_session/logout
-    Return:
-      - Response
-    """
-    from api.v1.app import auth
-    if auth.destroy_session(request):
-        return jsonify({}), 200
-    abort(404)
+    """ Logs out a user by deleting the session """
+    from api.v1.auth import auth
+
+    if not auth.destroy_session(request):
+        abort(404)
+
+    return jsonify({}), 200
