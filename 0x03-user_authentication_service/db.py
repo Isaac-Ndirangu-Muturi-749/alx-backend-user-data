@@ -51,15 +51,19 @@ class DB:
     def find_user_by(self, **kwargs) -> User:
         """Find a user by arbitrary keyword arguments
         """
-        if not kwargs or any(x not in valid_fields for x in kwargs):
+        if not kwargs:
             raise InvalidRequestError
 
-        session = self._session
-        query = session.query(User).filter_by(**kwargs)
-        user = query.first()
-        if user is None:
-            raise NoResultFound(
-                "No result found for the given filter criteria.")
+        column_names = User.__table__.columns.keys()
+        for key in kwargs.keys():
+            if key not in column_names:
+                raise InvalidRequestError
+
+        try:
+            user = self._session.query(User).filter_by(**kwargs).one()
+        except NoResultFound:
+            raise NoResultFound
+
         return user
 
     def update_user(self, user_id: int, **kwargs) -> None:
