@@ -11,6 +11,9 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from user import Base, User
 
+valid_fields = ['id', 'email', 'hashed_password', 'session_id',
+                'reset_token']
+
 
 class DB:
     """DB class
@@ -48,6 +51,9 @@ class DB:
     def find_user_by(self, **kwargs) -> User:
         """Find a user by arbitrary keyword arguments
         """
+        if not kwargs or any(x not in valid_fields for x in kwargs):
+            raise InvalidRequestError
+
         session = self._session
         query = session.query(User).filter_by(**kwargs)
         user = query.first()
